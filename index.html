@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Happy Birthday Eve, Rupali 🎂</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0D0B1F;
+      --surface:   #161232;
+      --rose:      #C9747A;
+      --rose-light:#E8A0A5;
+      --lavender:  #B8A9D9;
+      --champagne: #F2D2BD;
+      --star-white:#FFF8F0;
+      --text-body: #D6CCEA;
+      --glow:      rgba(201,116,122,0.35);
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: var(--bg);
+      color: var(--star-white);
+      font-family: 'Lato', sans-serif;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    #star-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .screen {
+      position: relative;
+      z-index: 1;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+      pointer-events: none;
+    }
+    .screen.active  { opacity: 1; transform: translateY(0); pointer-events: all; }
+    .screen.hidden  { display: none; }
+
+    /* ── SCREEN 1 — LANDING ── */
+    #screen-landing { text-align: center; gap: 1.5rem; }
+
+    .star-dust {
+      font-size: 0.85rem;
+      letter-spacing: 0.3em;
+      color: var(--lavender);
+      font-weight: 300;
+      text-transform: uppercase;
+      opacity: 0.8;
+    }
+    .headline {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(2.6rem, 10vw, 3.6rem);
+      line-height: 1.15;
+      color: var(--champagne);
+      text-shadow: 0 0 40px var(--glow);
+    }
+    .headline em { font-style: normal; color: var(--rose-light); }
+
+    .sub-line {
+      font-size: 0.95rem;
+      color: var(--text-body);
+      font-weight: 300;
+      max-width: 280px;
+      line-height: 1.7;
+    }
+    .tap-hint {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      cursor: pointer;
+      animation: float 3s ease-in-out infinite;
+    }
+    .tap-hint span { font-size: 0.78rem; color: var(--lavender); letter-spacing: 0.15em; text-transform: uppercase; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-8px); }
+    }
+
+    /* ── SCREEN 2 — CAKE ── */
+    #screen-cake { gap: 2rem; text-align: center; }
+
+    .cake-label {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(1.8rem, 7vw, 2.4rem);
+      color: var(--champagne);
+      text-shadow: 0 0 30px var(--glow);
+    }
+    .cake-wrapper {
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .cake-wrapper:active { transform: scale(0.95); }
+    .cake-wrapper svg { filter: drop-shadow(0 0 24px rgba(201,116,122,0.5)); }
+
+    .flame { transform-origin: 50% 100%; animation: flicker 0.9s ease-in-out infinite alternate; }
+    .flame:nth-child(2) { animation-delay: 0.3s; }
+    .flame:nth-child(3) { animation-delay: 0.6s; }
+    @keyframes flicker {
+      from { transform: scaleX(1) scaleY(1); opacity: 1; }
+      to   { transform: scaleX(0.85) scaleY(0.9); opacity: 0.75; }
+    }
+    .cake-prompt {
+      font-size: 0.85rem;
+      color: var(--lavender);
+      letter-spacing: 0.12em;
+      animation: pulse-text 2s ease-in-out infinite;
+    }
+    @keyframes pulse-text {
+      0%, 100% { opacity: 0.6; }
+      50%       { opacity: 1; }
+    }
+
+    /* ── SCREEN 3 — MESSAGE ── */
+    #screen-message { gap: 2rem; max-width: 420px; margin: 0 auto; }
+
+    .msg-eyebrow {
+      font-size: 0.78rem;
+      letter-spacing: 0.25em;
+      color: var(--rose);
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+      text-align: center;
+    }
+    .msg-title {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(2rem, 8vw, 2.8rem);
+      color: var(--champagne);
+      line-height: 1.2;
+      text-align: center;
+    }
+    .msg-divider {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--rose), transparent);
+      margin: 0 auto;
+    }
+    .msg-body { display: flex; flex-direction: column; gap: 1.2rem; }
+    .msg-body p {
+      font-size: 0.97rem;
+      line-height: 1.85;
+      color: var(--text-body);
+      font-weight: 300;
+    }
+    .msg-body p strong { color: var(--rose-light); font-weight: 700; }
+
+    .msg-sign {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.6rem;
+      color: var(--champagne);
+      text-align: right;
+    }
+    .btn-gallery {
+      width: 100%;
+      padding: 1rem 1.5rem;
+      background: linear-gradient(135deg, var(--rose), #9B5B8F);
+      border: none;
+      border-radius: 50px;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      box-shadow: 0 6px 30px rgba(201,116,122,0.4);
+      transition: box-shadow 0.3s ease, transform 0.15s ease;
+    }
+    .btn-gallery:active { transform: scale(0.97); }
+
+    /* ── SCREEN 4 — GALLERY ── */
+    #screen-gallery { gap: 2rem; padding-bottom: 3rem; }
+
+    .gallery-title {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(2rem, 8vw, 2.8rem);
+      color: var(--champagne);
+      text-align: center;
+      text-shadow: 0 0 30px var(--glow);
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      width: 100%;
+      max-width: 420px;
+    }
+    .photo-card {
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      aspect-ratio: 3/4;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06);
+      cursor: pointer;
+      background: var(--surface);
+    }
+    /* offset every 2nd and 4th card downward for staggered look */
+    .photo-card:nth-child(2) { margin-top: 1.8rem; }
+    .photo-card:nth-child(4) { margin-top: 1.8rem; }
+
+    .photo-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    /* gradient overlay at bottom of each card */
+    .photo-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 55%, rgba(13,11,31,0.75) 100%);
+    }
+    .photo-overlay {
+      position: absolute;
+      bottom: 0.8rem;
+      left: 0.8rem;
+      z-index: 2;
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.15rem;
+      color: #fff;
+      text-shadow: 0 1px 6px rgba(0,0,0,0.8);
+    }
+    .gallery-footer {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .gallery-footer p    { font-family: 'Dancing Script', cursive; font-size: 1.6rem; color: var(--rose-light); }
+    .gallery-footer small { font-size: 0.78rem; color: var(--lavender); font-weight: 300; letter-spacing: 0.12em; }
+
+    /* ── CONFETTI ── */
+    .confetti-piece {
+      position: fixed;
+      width: 8px; height: 8px;
+      border-radius: 2px;
+      pointer-events: none;
+      z-index: 999;
+      animation: confetti-fall var(--dur, 1.8s) ease-out forwards;
+    }
+    @keyframes confetti-fall {
+      0%   { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
+      80%  { opacity: 1; }
+      100% { opacity: 0; transform: translateY(var(--dy, 500px)) rotate(var(--rot, 540deg)) scale(0.4); }
+    }
+
+    /* ── LIGHTBOX ── */
+    #lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 900;
+      background: rgba(0,0,0,0.93);
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    #lightbox.open { display: flex; }
+    #lightbox img  { max-width: 100%; max-height: 90dvh; border-radius: 16px; object-fit: contain; box-shadow: 0 0 60px rgba(201,116,122,0.3); }
+    #lightbox-close {
+      position: absolute;
+      top: 1.2rem; right: 1.2rem;
+      background: rgba(255,255,255,0.1);
+      border: none; color: #fff;
+      border-radius: 50%;
+      width: 44px; height: 44px;
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="star-canvas"></canvas>
+
+<!-- ══════════════════════════════════
+     SCREEN 1 — LANDING
+══════════════════════════════════ -->
+<section id="screen-landing" class="screen hidden">
+  <p class="star-dust">✦ a birthday eve surprise ✦</p>
+
+  <h1 class="headline">
+    Hey,<br/><em>Rupali</em> 🌙
+  </h1>
+
+  <p class="sub-line">
+    Something special was made just for you tonight. Open it carefully — it's full of love.
+  </p>
+
+  <div class="tap-hint" onclick="goToCake()">
+    <span>Tap to begin</span>
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <path d="M14 6L14 22M7 15L14 22L21 15" stroke="#B8A9D9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     SCREEN 2 — CAKE
+══════════════════════════════════ -->
+<section id="screen-cake" class="screen hidden">
+  <p class="cake-label">Your wish is waiting…</p>
+
+  <div class="cake-wrapper" onclick="goToMessage()" role="button" aria-label="Tap the cake">
+    <svg width="220" height="260" viewBox="0 0 220 260" xmlns="http://www.w3.org/2000/svg">
+      <!-- Candles -->
+      <rect x="68"  y="88" width="12" height="34" rx="5" fill="#F2D2BD"/>
+      <ellipse class="flame" cx="74"  cy="86" rx="6" ry="9" fill="#FFA040" opacity="0.95"/>
+      <ellipse cx="74"  cy="88" rx="3" ry="4" fill="#FFEF70"/>
+
+      <rect x="104" y="76" width="12" height="44" rx="5" fill="#E8A0A5"/>
+      <ellipse class="flame" cx="110" cy="74" rx="6" ry="9" fill="#FF7060" opacity="0.95"/>
+      <ellipse cx="110" cy="76" rx="3" ry="4" fill="#FFEF70"/>
+
+      <rect x="140" y="86" width="12" height="36" rx="5" fill="#B8A9D9"/>
+      <ellipse class="flame" cx="146" cy="84" rx="6" ry="9" fill="#FF9070" opacity="0.95"/>
+      <ellipse cx="146" cy="86" rx="3" ry="4" fill="#FFEF70"/>
+
+      <!-- Top tier -->
+      <rect x="55"  y="120" width="110" height="38" rx="8" fill="#9B5B8F"/>
+      <path d="M65 120 Q75 132 85 120 Q95 132 105 120 Q115 132 125 120 Q135 132 145 120 Q155 132 165 120" fill="none" stroke="#F2D2BD" stroke-width="3.5" stroke-linecap="round"/>
+      <circle cx="80"  cy="136" r="4" fill="#FFF8F0" opacity="0.7"/>
+      <circle cx="110" cy="136" r="4" fill="#FFF8F0" opacity="0.7"/>
+      <circle cx="140" cy="136" r="4" fill="#FFF8F0" opacity="0.7"/>
+
+      <!-- Middle tier -->
+      <rect x="42"  y="154" width="136" height="46" rx="6" fill="#7B3D7A"/>
+      <path d="M52 154 Q64 168 76 154 Q88 168 100 154 Q112 168 124 154 Q136 168 148 154 Q160 168 168 154" fill="none" stroke="#E8A0A5" stroke-width="3.5" stroke-linecap="round"/>
+      <circle cx="75"  cy="176" r="6" fill="#C9747A" opacity="0.8"/>
+      <circle cx="110" cy="176" r="6" fill="#C9747A" opacity="0.8"/>
+      <circle cx="145" cy="176" r="6" fill="#C9747A" opacity="0.8"/>
+      <circle cx="75"  cy="176" r="3" fill="#FFF8F0"/>
+      <circle cx="110" cy="176" r="3" fill="#FFF8F0"/>
+      <circle cx="145" cy="176" r="3" fill="#FFF8F0"/>
+
+      <!-- Base tier -->
+      <rect x="28"  y="196" width="164" height="54" rx="8" fill="#5A2A7A"/>
+      <path d="M38 196 Q52 212 66 196 Q80 212 94 196 Q108 212 122 196 Q136 212 150 196 Q164 212 178 196" fill="none" stroke="#B8A9D9" stroke-width="4" stroke-linecap="round"/>
+      <text x="110" y="228" text-anchor="middle" font-family="Dancing Script, cursive" font-size="22" fill="#F2D2BD" font-weight="600">Rupali</text>
+
+      <!-- Plate -->
+      <ellipse cx="110" cy="250" rx="90" ry="10" fill="#2D1F5E"/>
+      <ellipse cx="110" cy="250" rx="86" ry="7"  fill="#3D2A7A" opacity="0.6"/>
+    </svg>
+  </div>
+
+  <p class="cake-prompt">✦ tap the cake ✦</p>
+</section>
+
+<!-- ══════════════════════════════════
+     SCREEN 3 — MESSAGE
+══════════════════════════════════ -->
+<section id="screen-message" class="screen hidden">
+  <p class="msg-eyebrow">A message from the heart</p>
+  <h2 class="msg-title">Happy Birthday Eve,<br/>Rupali 🌸</h2>
+
+  <div class="msg-divider"></div>
+
+  <div class="msg-body">
+    <p>On the night before your birthday, I just want you to know — having you in my life is one of the most beautiful things that has ever happened to me.</p>
+    <p>You are not just my <strong>best friend</strong>. You are my safe place, my loudest laugh, my truest mirror. The kind of person who makes ordinary days feel like something worth remembering.</p>
+    <p>As midnight brings in your special day, I hope the universe wraps around you with every good thing you deserve — and you deserve <strong>so, so much.</strong></p>
+    <p>Here's to you. To your beautiful soul, your ridiculously contagious smile, and another year of being <strong>unapologetically, wonderfully you.</strong></p>
+    <p>I love you more than you know. Happy birthday, Rupali. 🎂✨</p>
+  </div>
+
+  <p class="msg-sign">— always yours 💕</p>
+
+  <button class="btn-gallery" onclick="goToGallery()">See Our Memories →</button>
+</section>
+
+<!-- ══════════════════════════════════
+     SCREEN 4 — GALLERY
+══════════════════════════════════ -->
+<section id="screen-gallery" class="screen hidden">
+  <h2 class="gallery-title">Us, always ✨</h2>
+
+  <div class="gallery-grid">
+
+    <!-- ╔══════════════════════════════════════════╗ -->
+    <!-- ║  CHANGE THE 4 IMAGE FILENAMES BELOW      ║ -->
+    <!-- ║  Just replace: photo1.jpg, photo2.jpg... ║ -->
+    <!-- ║  with your actual image file names       ║ -->
+    <!-- ╚══════════════════════════════════════════╝ -->
+
+    <div class="photo-card" onclick="openLightbox('photo1.jpg')">
+      <img src="photo1.jpg" alt="Rupali" />
+      <span class="photo-overlay">Rupali ✨</span>
+    </div>
+
+    <div class="photo-card" onclick="openLightbox('photo2.jpg')">
+      <img src="photo2.jpg" alt="Rupali" />
+      <span class="photo-overlay">Rupali ✨</span>
+    </div>
+
+    <div class="photo-card" onclick="openLightbox('photo3.jpg')">
+      <img src="photo3.jpg" alt="Rupali" />
+      <span class="photo-overlay">Rupali ✨</span>
+    </div>
+
+    <div class="photo-card" onclick="openLightbox('photo4.jpg')">
+      <img src="photo4.jpg" alt="Rupali" />
+      <span class="photo-overlay">Rupali ✨</span>
+    </div>
+
+  </div>
+
+  <div class="gallery-footer">
+    <p>Happy Birthday 🎂🌙</p>
+    <small>✦ may this year be your best one yet ✦</small>
+  </div>
+</section>
+
+<!-- ── LIGHTBOX ── -->
+<div id="lightbox">
+  <button id="lightbox-close" onclick="closeLightbox()" aria-label="Close">✕</button>
+  <img id="lightbox-img" src="" alt="Rupali" />
+</div>
+
+<script>
+  /* ── STAR FIELD ── */
+  (function () {
+    const canvas = document.getElementById('star-canvas');
+    const ctx = canvas.getContext('2d');
+    let stars = [], W, H;
+
+    function resize() {
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+      stars = [];
+      const n = Math.min(Math.floor((W * H) / 3000), 180);
+      for (let i = 0; i < n; i++) {
+        stars.push({ x: Math.random()*W, y: Math.random()*H, r: Math.random()*1.4+0.3, a: Math.random(), spd: Math.random()*0.004+0.001, dir: Math.random()<0.5?1:-1 });
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      stars.forEach(s => {
+        s.a += s.spd * s.dir;
+        if (s.a >= 1 || s.a <= 0.1) s.dir *= -1;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,248,240,${s.a})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(draw);
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+    draw();
+  })();
+
+  /* ── SCREEN NAV ── */
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => {
+      s.classList.remove('active');
+      s.classList.add('hidden');
+    });
+    const el = document.getElementById(id);
+    el.classList.remove('hidden');
+    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('active')));
+    window.scrollTo(0, 0);
+  }
+
+  /* show landing screen on load */
+  window.addEventListener('load', () => showScreen('screen-landing'));
+
+  function goToCake()    { showScreen('screen-cake'); }
+  function goToGallery() { showScreen('screen-gallery'); }
+
+  function goToMessage() {
+    burstConfetti();
+    showScreen('screen-message');
+  }
+
+  /* ── CONFETTI ── */
+  function burstConfetti() {
+    const colors = ['#C9747A','#B8A9D9','#F2D2BD','#FFF8F0','#9B5B8F','#FFC0CB'];
+    const cx = window.innerWidth / 2;
+    const cy = window.innerHeight / 2;
+    for (let i = 0; i < 60; i++) {
+      const el    = document.createElement('div');
+      el.className = 'confetti-piece';
+      const angle  = (Math.PI * 2 / 60) * i;
+      const speed  = 120 + Math.random() * 200;
+      const dx     = Math.cos(angle) * speed;
+      const dy     = Math.sin(angle) * speed - 100;
+      el.style.cssText = `
+        left:${cx}px; top:${cy}px;
+        background:${colors[i % colors.length]};
+        --dy:${dy + 400}px;
+        --rot:${Math.random()>.5?'':'-'}${180+Math.floor(Math.random()*360)}deg;
+        --dur:${1.2+Math.random()*0.9}s;
+        border-radius:${Math.random()>.5?'50%':'2px'};
+        transform:translate(${dx}px,0);
+      `;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 2500);
+    }
+  }
+
+  /* ── LIGHTBOX ── */
+  function openLightbox(src) {
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox').classList.add('open');
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+  }
+  document.getElementById('lightbox').addEventListener('click', function(e) {
+    if (e.target === this) closeLightbox();
+  });
+</script>
+</body>
+</html>
